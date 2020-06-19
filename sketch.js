@@ -1,6 +1,6 @@
 let classifier;
 // Model URL
-let imageModelURL = 'https://teachablemachine.withgoogle.com/models/l3RNjZHm/';
+let imageModelURL = 'https://teachablemachine.withgoogle.com/models/5OhFC4JPQ/';
 
 // Video
 let video;
@@ -12,30 +12,31 @@ let l = '';
 let l1 = '';
 let count = 0;
 let n = 60;
-let sent='';
-let f=0;
-let len=0;
-  let foo = new p5.Speech();
+let sent = '';
+let f = 0;
+let len = 0;
+let foo = new p5.Speech();
 // Load the model first
 function preload() {
   classifier = ml5.imageClassifier(imageModelURL + 'model.json');
 }
+
 function setup() {
-  createCanvas(300, 200);
+  createCanvas(380, 300);
   // Create the video
   button = createButton('Convert');
-  button.position(330,30);
+  button.position(400, 30);
   button.mousePressed(convert);
   button = createButton('Clear');
-  button.position(330,60);
+  button.position(400, 60);
   button.mousePressed(cls);
   button = createButton('Back');
-  button.position(330,90);
+  button.position(400, 90);
   button.mousePressed(back);
   video = createCapture(VIDEO);
-  video.size(320, 240);
+  video.size(380, 280);
   video.hide();
-  
+
 
   colorMode(RGB, 100);
   flippedVideo = ml5.flipImage(video)
@@ -47,16 +48,16 @@ function draw() {
   background(0);
   // Draw the video
   image(flippedVideo, 0, 0);
-  stroke('green');
+  stroke('blue');
 
 
   noFill();
-  square(200, 50, 100);
+  rect(50, 50, 280, 200);
   // Draw the label
   fill(255);
-  textSize(16);
+  textSize(20);
   textAlign(LEFT);
-  text(label, 10, 10);
+  text(label, 20, 20);
   textAlign(CENTER);
   text(word, width / 2, height - 4);
 
@@ -93,16 +94,16 @@ function gotResult(error, results) {
     l = '';
     if (l1 !== '1') {
       word = word.concat(l1);
-      f=0;
+      f = 0;
       len++;
-      
+
     } else {
-       f++;
-      if(f===1){
+      f++;
+      if (f === 1) {
         word = word.concat(' ');
         len++;
       }
-  }
+    }
   }
   setInterval(classifyVideo(), 1300);
 }
@@ -122,33 +123,37 @@ function letter(l) {
     }
   }
 }
-function spell(sent){
-var data = null;
-var xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
 
-xhr.addEventListener("readystatechange", function() {
-  if (this.readyState === this.DONE) {
-    a = this.responseText;
-    a = JSON.parse(a);
-    console.log(a.suggestion);
-    foo.speak(a.suggestion);
-  }
-});
+function spell(sent) {
+  var data = null;
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
 
-xhr.open("GET", "https://montanaflynn-spellcheck.p.rapidapi.com/check/?text=" + sent);
-xhr.setRequestHeader("x-rapidapi-host", "montanaflynn-spellcheck.p.rapidapi.com");
-xhr.setRequestHeader("x-rapidapi-key", "64316f0976msh4af7d6244bdf278p11219ejsna08b83584ba5");
+  xhr.addEventListener("readystatechange", function() {
+    if (this.readyState === this.DONE) {
+      a = this.responseText;
+      a = JSON.parse(a);
+      console.log(a.suggestion);
+      foo.speak(a.suggestion);
+    }
+  });
 
-xhr.send(data);
+  xhr.open("GET", "https://montanaflynn-spellcheck.p.rapidapi.com/check/?text=" + sent);
+  xhr.setRequestHeader("x-rapidapi-host", "montanaflynn-spellcheck.p.rapidapi.com");
+  xhr.setRequestHeader("x-rapidapi-key", "64316f0976msh4af7d6244bdf278p11219ejsna08b83584ba5");
+
+  xhr.send(data);
 }
-function convert(){
+
+function convert() {
   spell(word);
 }
-function cls(){
-  word='';
+
+function cls() {
+  word = '';
 }
-function back(){
-  word=subset(word,0,len--);
+
+function back() {
+  word = subset(word, 0, len--);
 }
 // </script>
